@@ -20,6 +20,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface HeaderProps {
   toggleSidebar?: () => void;
@@ -32,14 +34,35 @@ interface HeaderProps {
 
 const Header = ({
   toggleSidebar = () => {},
-  pageTitle = "Dashboard",
+  pageTitle,
   notificationCount = 3,
   userName = "Dr. John Doe",
   userEmail = "doctor@hospital.com",
   userAvatar = "",
 }: HeaderProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Determine page title based on current route if not provided
+  const getPageTitle = () => {
+    if (pageTitle) return pageTitle;
+
+    const path = location.pathname;
+    if (path === "/") return "Dashboard";
+    if (path === "/patients") return "Patient Management";
+    if (path === "/appointments") return "Appointment System";
+    if (path === "/billing") return "Billing Module";
+    if (path === "/records") return "Medical Records";
+    if (path === "/pharmacy") return "Pharmacy";
+    if (path === "/laboratory") return "Laboratory";
+    if (path === "/vitals") return "Vitals";
+    if (path === "/settings") return "Settings";
+
+    return "Dashboard";
+  };
+
   return (
-    <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-10 shadow-sm">
+    <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4 lg:px-6 sticky top-0 z-10 shadow-sm">
       <div className="flex items-center gap-4">
         <Button
           variant="ghost"
@@ -51,7 +74,9 @@ const Header = ({
           <Menu className="h-5 w-5" />
         </Button>
 
-        <h1 className="text-xl font-semibold hidden md:block">{pageTitle}</h1>
+        <h1 className="text-xl font-semibold hidden md:block">
+          {getPageTitle()}
+        </h1>
       </div>
 
       <div className="flex-1 max-w-md mx-4 hidden md:block">
@@ -60,12 +85,13 @@ const Header = ({
           <Input
             type="search"
             placeholder="Search patients, appointments, etc..."
-            className="pl-10 w-full bg-gray-50"
+            className="pl-10 w-full bg-gray-50 dark:bg-gray-800"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2 md:gap-4">
+        <ThemeToggle />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon" className="relative">
@@ -148,7 +174,10 @@ const Header = ({
               <User className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => navigate("/settings")}
+            >
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>

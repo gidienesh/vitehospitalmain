@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Calendar,
   ChevronLeft,
@@ -22,6 +23,7 @@ interface Appointment {
 const AppointmentSystem = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<"day" | "week">("day");
+  const navigate = useNavigate();
 
   // Sample appointment data
   const appointments: Appointment[] = [
@@ -121,7 +123,10 @@ const AppointmentSystem = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+        <button
+          onClick={() => navigate("/appointment-form")}
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           <span>New Appointment</span>
         </button>

@@ -1,5 +1,5 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,8 @@ import {
   LogOut,
   HelpCircle,
   Bell,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 interface SidebarProps {
@@ -30,31 +32,39 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
+  const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(collapsed);
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+    onToggle();
+  };
+
   const menuItems = [
     {
       name: "Dashboard",
       icon: <Home className="w-5 h-5" />,
-      path: "/dashboard",
+      path: "/",
     },
     {
       name: "Patient Management",
       icon: <Users className="w-5 h-5" />,
-      path: "/patient-management",
+      path: "/patients",
     },
     {
       name: "Appointment System",
       icon: <Calendar className="w-5 h-5" />,
-      path: "/appointment-system",
+      path: "/appointments",
     },
     {
       name: "Billing Module",
       icon: <CreditCard className="w-5 h-5" />,
-      path: "/billing-module",
+      path: "/billing",
     },
     {
       name: "Medical Records",
       icon: <FileText className="w-5 h-5" />,
-      path: "/medical-records",
+      path: "/records",
     },
     { name: "Pharmacy", icon: <Pill className="w-5 h-5" />, path: "/pharmacy" },
     {
@@ -67,12 +77,24 @@ const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
 
   return (
     <div
-      className="h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out"
-      style={{ width: collapsed ? "80px" : "280px" }}
+      className="h-screen bg-background border-r border-border flex flex-col transition-all duration-300 ease-in-out relative"
+      style={{ width: isCollapsed ? "80px" : "280px" }}
     >
+      {/* Toggle button */}
+      <button
+        onClick={toggleSidebar}
+        className="absolute -right-3 top-20 bg-background border border-border rounded-full p-1 shadow-md z-10"
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-4 w-4 text-gray-500" />
+        ) : (
+          <ChevronLeft className="h-4 w-4 text-gray-500" />
+        )}
+      </button>
+
       {/* Hospital Logo and Name */}
-      <div className="p-4 border-b border-gray-200">
-        {collapsed ? (
+      <div className="p-4 border-b border-border">
+        {isCollapsed ? (
           <div className="flex justify-center">
             <div className="w-10 h-10 rounded-md bg-primary flex items-center justify-center text-white font-bold text-xl">
               H
@@ -84,8 +106,10 @@ const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
               H
             </div>
             <div>
-              <h1 className="text-lg font-bold text-gray-900">HMS</h1>
-              <p className="text-xs text-gray-500">Hospital Management</p>
+              <h1 className="text-lg font-bold">HMS</h1>
+              <p className="text-xs text-muted-foreground">
+                Hospital Management
+              </p>
             </div>
           </div>
         )}
@@ -94,17 +118,20 @@ const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
       {/* Navigation Links */}
       <nav className="flex-1 overflow-y-auto py-4 px-3">
         <ul className="space-y-2">
-          {menuItems.map((item) => (
-            <li key={item.name}>
-              <Link
-                to={item.path}
-                className={`flex items-center ${collapsed ? "justify-center" : "justify-start"} p-3 rounded-md hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors`}
-              >
-                <span className="flex-shrink-0">{item.icon}</span>
-                {!collapsed && <span className="ml-3">{item.name}</span>}
-              </Link>
-            </li>
-          ))}
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <li key={item.name}>
+                <Link
+                  to={item.path}
+                  className={`flex items-center ${isCollapsed ? "justify-center" : "justify-start"} p-3 rounded-md hover:bg-muted transition-colors ${isActive ? "bg-primary/10 text-primary" : "text-foreground hover:text-primary"}`}
+                >
+                  <span className="flex-shrink-0">{item.icon}</span>
+                  {!isCollapsed && <span className="ml-3">{item.name}</span>}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
@@ -112,18 +139,18 @@ const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
       <div className="px-3 py-2">
         <Link
           to="/settings"
-          className={`flex items-center ${collapsed ? "justify-center" : "justify-start"} p-3 rounded-md hover:bg-gray-100 text-gray-700 hover:text-primary transition-colors`}
+          className={`flex items-center ${isCollapsed ? "justify-center" : "justify-start"} p-3 rounded-md hover:bg-muted text-foreground hover:text-primary transition-colors`}
         >
           <span className="flex-shrink-0">
             <Settings className="w-5 h-5" />
           </span>
-          {!collapsed && <span className="ml-3">Settings</span>}
+          {!isCollapsed && <span className="ml-3">Settings</span>}
         </Link>
       </div>
 
       {/* User Profile */}
-      <div className="border-t border-gray-200 p-4">
-        {collapsed ? (
+      <div className="border-t border-border p-4">
+        {isCollapsed ? (
           <div className="flex justify-center">
             <Avatar>
               <AvatarImage
@@ -138,7 +165,7 @@ const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="ghost"
-                className="w-full flex items-center justify-start p-2 hover:bg-gray-100 rounded-md"
+                className="w-full flex items-center justify-start p-2 hover:bg-muted rounded-md"
               >
                 <Avatar className="h-8 w-8 mr-2">
                   <AvatarImage
@@ -149,7 +176,9 @@ const Sidebar = ({ collapsed = false, onToggle = () => {} }: SidebarProps) => {
                 </Avatar>
                 <div className="flex flex-col items-start">
                   <span className="text-sm font-medium">Dr. Admin</span>
-                  <span className="text-xs text-gray-500">Administrator</span>
+                  <span className="text-xs text-muted-foreground">
+                    Administrator
+                  </span>
                 </div>
               </Button>
             </DropdownMenuTrigger>

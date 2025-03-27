@@ -1,5 +1,14 @@
 import { useState } from "react";
-import { Search, Plus, Filter, MoreVertical } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Filter,
+  MoreVertical,
+  Edit,
+  Trash2,
+  Eye,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface Patient {
   id: string;
@@ -14,6 +23,7 @@ interface Patient {
 
 const PatientManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
   // Sample patient data
   const patients: Patient[] = [
@@ -86,7 +96,10 @@ const PatientManagement = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+        <button
+          onClick={() => navigate("/patient-registration")}
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           <span>Add Patient</span>
         </button>
@@ -174,9 +187,26 @@ const PatientManagement = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-right">
-                    <button className="p-1 rounded-full hover:bg-gray-100">
-                      <MoreVertical className="w-4 h-4 text-gray-500" />
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        className="p-1 rounded-full hover:bg-gray-100"
+                        title="View Patient"
+                      >
+                        <Eye className="w-4 h-4 text-blue-500" />
+                      </button>
+                      <button
+                        className="p-1 rounded-full hover:bg-gray-100"
+                        title="Edit Patient"
+                      >
+                        <Edit className="w-4 h-4 text-amber-500" />
+                      </button>
+                      <button
+                        className="p-1 rounded-full hover:bg-gray-100"
+                        title="Delete Patient"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

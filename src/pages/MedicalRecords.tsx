@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Filter,
@@ -25,6 +26,7 @@ const MedicalRecords = () => {
   const [selectedRecord, setSelectedRecord] = useState<MedicalRecord | null>(
     null,
   );
+  const navigate = useNavigate();
 
   // Sample medical records data
   const records: MedicalRecord[] = [
@@ -109,7 +111,10 @@ const MedicalRecords = () => {
           </p>
         </div>
 
-        <button className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+        <button
+          onClick={() => navigate("/medical-record-form")}
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+        >
           <FilePlus className="w-4 h-4" />
           <span>Add Record</span>
         </button>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Plus, Filter, Download, MoreVertical } from "lucide-react";
 
 interface Invoice {
@@ -20,6 +21,7 @@ interface Invoice {
 const BillingModule = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
+  const navigate = useNavigate();
 
   // Sample invoice data
   const invoices: Invoice[] = [
@@ -154,7 +156,10 @@ const BillingModule = () => {
           <p className="text-gray-500 mt-1">Manage invoices and payments</p>
         </div>
 
-        <button className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors">
+        <button
+          onClick={() => navigate("/billing-form")}
+          className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-colors"
+        >
           <Plus className="w-4 h-4" />
           <span>Create Invoice</span>
         </button>
